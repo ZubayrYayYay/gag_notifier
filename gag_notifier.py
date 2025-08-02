@@ -46,7 +46,12 @@ def seconds_until_next_5_min_offset_1():
     minute %= 60
     hour %= 24
     next_t = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
-    return (next_t - now).total_seconds()
+    delta = (next_t - now).total_seconds()
+    if delta <= 0:
+        # Add 5 minutes to ensure positive sleep time
+        next_t += timedelta(minutes=5)
+        delta = (next_t - now).total_seconds()
+    return delta
 
 def seconds_until_next_5_min_offset_30():
     now = datetime.now()
