@@ -3,7 +3,7 @@ import json
 import aiohttp
 from collections import defaultdict
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import os
 
