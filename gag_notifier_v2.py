@@ -265,9 +265,9 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         await query.edit_message_text(text="Unknown action.", reply_markup=get_keyboard(update))
 
 async def manual_item_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    item_names = [name.strip() for name in update.message.text.split(',')]
     if context.user_data.get('awaiting_manual_item'):
-        item_names = [name.strip() for name in update.message.text.split(',')]
-        user_id = update.effective_user.id
         conn = sqlite3.connect('gag_notifier.db')
         cursor = conn.cursor()
         set_notification_status(user_id, 1)  # Re-enable notifications after manual item handling
@@ -303,8 +303,6 @@ async def manual_item_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
         await update.message.reply_text(msg.strip(), reply_markup=get_keyboard(update))
         context.user_data['awaiting_manual_item'] = False
     if context.user_data.get('awaiting_remove_item'):
-        item_names = [name.strip() for name in update.message.text.split(',')]
-        user_id = update.effective_user.id
         conn = sqlite3.connect('gag_notifier.db')
         cursor = conn.cursor()
         set_notification_status(user_id, 1)  # Re-enable notifications after manual item handling
