@@ -149,6 +149,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         item_row = cursor.fetchone()
         if item_row:
             item_id = item_row[0]
+            set_notification_status(user_id, 1)  # Re-enable notifications after manual item handling
             if context.user_data.get('awaiting_remove_item'):
                 cursor.execute('DELETE FROM watchlist WHERE user_id = ? AND item_id = ?', (str(user_id), item_id))
                 if cursor.rowcount > 0:
@@ -168,7 +169,6 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             await query.edit_message_text(text="❌ Item not found.", reply_markup=get_keyboard(update))
         conn.close()
         context.user_data['items_page'] = 0  # Reset page
-        set_notification_status(user_id, 1)  # Re-enable notifications after adding/removing items
 
     elif query.data == 'add_manual':
         context.user_data['awaiting_manual_item'] = True
@@ -269,6 +269,7 @@ async def manual_item_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
         cursor.execute('INSERT OR IGNORE INTO items (name) VALUES (?)', (item_name,))
         cursor.execute('SELECT id FROM items WHERE name = ?', (item_name,))
         item_row = cursor.fetchone()
+        set_notification_status(user_id, 1)  # Re-enable notifications after manual item handling
         if item_row:
             item_id = item_row[0]
             # Check if already in watchlist
@@ -291,6 +292,7 @@ async def manual_item_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
         cursor = conn.cursor()
         cursor.execute('SELECT id FROM items WHERE name = ?', (item_name,))
         item_row = cursor.fetchone()
+        set_notification_status(user_id, 1)  # Re-enable notifications after manual item handling
         if item_row:
             item_id = item_row[0]
             cursor.execute('DELETE FROM watchlist WHERE user_id = ? AND item_id = ?', (str(user_id), item_id))
@@ -303,7 +305,6 @@ async def manual_item_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
             await update.message.reply_text("❌ Item not found.", reply_markup=get_keyboard(update))
         conn.close()
         context.user_data['awaiting_remove_item'] = False
-    set_notification_status(user_id, 1)  # Re-enable notifications after manual item handling
 
 def update_items():
     url = "https://growagarden.gg/api/stock"
@@ -324,14 +325,6 @@ def update_items():
     except requests.RequestException as e:
         print(f"❌ Failed to update items: {e}")
         # Optionally, you can log this error to a file or database for further analysis
-
-def load_user_watchlist(user_id):
-    conn = sqlite3.connect('gag_notifier.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT items.name FROM watchlist JOIN items ON watchlist.item_id = items.id WHERE watchlist.user_id = ?', (str(user_id),))
-    watchlist_items = cursor.fetchall()
-    conn.close()
-    return [item[0] for item in watchlist_items]
 
 def combine_items(items, key_qty="value"):
     d = defaultdict(int)
@@ -403,6 +396,18 @@ async def check_current_stock(check_at=None, app=None):
                             [InlineKeyboardButton("Disable Notifications", callback_data='disable_notifications')]
                         ])
                     )
+                else:
+                    print(f"🗑️ No watched items in stock for user {user_id} at {check_at}")
+                    await app.bot.send_message(
+                        chat_id=user_id,
+                        text=f"No watched items in stock at {check_at}.",
+                        reply_markup=InlineKeyboardMarkup([
+                            [InlineKeyboardButton("Add Item to Watchlist", callback_data='btn_add')],
+                            [InlineKeyboardButton("Remove Item from Watchlist", callback_data='btn_remove')],
+                            [InlineKeyboardButton("View Watchlist", callback_data='view_watchlist')],
+                            [InlineKeyboardButton("Disable Notifications", callback_data='disable_notifications')]
+                        ])
+                    )
             conn.close()
 
         previous_stock = current.copy()
@@ -410,6 +415,10 @@ async def check_current_stock(check_at=None, app=None):
 
     except Exception as e:
         print(f"❌ Fetch error: {e}")
+        await app.bot.send_message(
+            chat_id=os.getenv("TELEGRAM_ERROR_CHAT_ID"),
+            text=f"❌ Error fetching stock data: {e}"
+        )
 
 async def periodic_stock_check(app):
     try:
