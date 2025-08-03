@@ -128,6 +128,8 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         if nav_buttons:
             keyboard.append(nav_buttons)
 
+        keyboard.append([InlineKeyboardButton("Cancel", callback_data='btn_cancel')])
+
         reply_markup = InlineKeyboardMarkup(keyboard)
 
         await query.edit_message_text(
@@ -172,14 +174,14 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
     elif query.data == 'add_manual':
         context.user_data['awaiting_manual_item'] = True
-        await query.edit_message_text(text="Please send the item name you want to add:", reply_markup=InlineKeyboardMarkup([
+        await query.edit_message_text(text="Please send the item name you want to add(e.g. Grandmaster Sprinkler OR Grandmaster Sprinkler,Beanstalk ):", reply_markup=InlineKeyboardMarkup([
             [InlineKeyboardButton("Cancel", callback_data='btn_cancel')]
         ]))
         context.user_data['items_page'] = 0  # Reset page
     
     elif query.data == 'remove_manual':
         context.user_data['awaiting_remove_item'] = True
-        await query.edit_message_text(text="Please send the item name you want to remove:", reply_markup=InlineKeyboardMarkup([
+        await query.edit_message_text(text="Please send the item name you want to remove(e.g. Grandmaster Sprinkler OR Grandmaster Sprinkler,Beanstalk ):", reply_markup=InlineKeyboardMarkup([
             [InlineKeyboardButton("Cancel", callback_data='btn_cancel')]
         ]))
         context.user_data['items_page'] = 0  # Reset page
@@ -226,10 +228,12 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         if nav_buttons:
             keyboard.append(nav_buttons)
 
+        keyboard.append([InlineKeyboardButton("Cancel", callback_data='btn_cancel')])
+
         reply_markup = InlineKeyboardMarkup(keyboard)
 
         await query.edit_message_text(
-            text="Choose an item to REMOVE from your watchlist or add manually:",
+            text="Choose an item to REMOVE from your watchlist or remove manually:",
             reply_markup=reply_markup
         )
     elif query.data == 'view_watchlist':
@@ -262,48 +266,75 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
 async def manual_item_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if context.user_data.get('awaiting_manual_item'):
-        item_name = update.message.text.strip()
+        item_names = [name.strip() for name in update.message.text.split(',')]
         user_id = update.effective_user.id
         conn = sqlite3.connect('gag_notifier.db')
         cursor = conn.cursor()
-        cursor.execute('INSERT OR IGNORE INTO items (name) VALUES (?)', (item_name,))
-        cursor.execute('SELECT id FROM items WHERE name = ?', (item_name,))
-        item_row = cursor.fetchone()
         set_notification_status(user_id, 1)  # Re-enable notifications after manual item handling
-        if item_row:
-            item_id = item_row[0]
-            # Check if already in watchlist
-            cursor.execute('SELECT 1 FROM watchlist WHERE user_id = ? AND item_id = ?', (str(user_id), item_id))
-            exists = cursor.fetchone()
-            if exists:
-                await update.message.reply_text(f"⚠️ '{item_name}' is already in your watchlist.", reply_markup=get_keyboard(update))
+        added = []
+        already = []
+        failed = []
+        for item_name in item_names:
+            if not item_name:
+                continue
+            cursor.execute('INSERT OR IGNORE INTO items (name) VALUES (?)', (item_name,))
+            cursor.execute('SELECT id FROM items WHERE name = ?', (item_name,))
+            item_row = cursor.fetchone()
+            if item_row:
+                item_id = item_row[0]
+                cursor.execute('SELECT 1 FROM watchlist WHERE user_id = ? AND item_id = ?', (str(user_id), item_id))
+                exists = cursor.fetchone()
+                if exists:
+                    already.append(item_name)
+                else:
+                    cursor.execute('INSERT INTO watchlist (user_id, item_id) VALUES (?, ?)', (str(user_id), item_id))
+                    added.append(item_name)
             else:
-                cursor.execute('INSERT INTO watchlist (user_id, item_id) VALUES (?, ?)', (str(user_id), item_id))
-                conn.commit()
-                await update.message.reply_text(f"✅ Added '{item_name}' to your watchlist.", reply_markup=get_keyboard(update))
-        else:
-            await update.message.reply_text("❌ Failed to add item.", reply_markup=get_keyboard(update))
+                failed.append(item_name)
+        conn.commit()
         conn.close()
+        msg = ""
+        if added:
+            msg += f"✅ Added: {', '.join(added)}\n"
+        if already:
+            msg += f"⚠️ Already in watchlist: {', '.join(already)}\n"
+        if failed:
+            msg += f"❌ Failed to add: {', '.join(failed)}\n"
+        await update.message.reply_text(msg.strip(), reply_markup=get_keyboard(update))
         context.user_data['awaiting_manual_item'] = False
     if context.user_data.get('awaiting_remove_item'):
-        item_name = update.message.text.strip()
+        item_names = [name.strip() for name in update.message.text.split(',')]
         user_id = update.effective_user.id
         conn = sqlite3.connect('gag_notifier.db')
         cursor = conn.cursor()
-        cursor.execute('SELECT id FROM items WHERE name = ?', (item_name,))
-        item_row = cursor.fetchone()
         set_notification_status(user_id, 1)  # Re-enable notifications after manual item handling
-        if item_row:
-            item_id = item_row[0]
-            cursor.execute('DELETE FROM watchlist WHERE user_id = ? AND item_id = ?', (str(user_id), item_id))
-            conn.commit()
-            if cursor.rowcount > 0:
-                await update.message.reply_text(f"✅ Removed '{item_name}' from your watchlist.", reply_markup=get_keyboard(update))
+        removed = []
+        not_in_watchlist = []
+        not_found = []
+        for item_name in item_names:
+            if not item_name:
+                continue
+            cursor.execute('SELECT id FROM items WHERE name = ?', (item_name,))
+            item_row = cursor.fetchone()
+            if item_row:
+                item_id = item_row[0]
+                cursor.execute('DELETE FROM watchlist WHERE user_id = ? AND item_id = ?', (str(user_id), item_id))
+                conn.commit()
+                if cursor.rowcount > 0:
+                    removed.append(item_name)
+                else:
+                    not_in_watchlist.append(item_name)
             else:
-                await update.message.reply_text(f"❌ '{item_name}' is not in your watchlist.", reply_markup=get_keyboard(update))
-        else:
-            await update.message.reply_text("❌ Item not found.", reply_markup=get_keyboard(update))
+                not_found.append(item_name)
         conn.close()
+        msg = ""
+        if removed:
+            msg += f"✅ Removed: {', '.join(removed)}\n"
+        if not_in_watchlist:
+            msg += f"❌ Not in watchlist: {', '.join(not_in_watchlist)}\n"
+        if not_found:
+            msg += f"❌ Item not found: {', '.join(not_found)}\n"
+        await update.message.reply_text(msg.strip(), reply_markup=get_keyboard(update))
         context.user_data['awaiting_remove_item'] = False
 
 def update_items():
