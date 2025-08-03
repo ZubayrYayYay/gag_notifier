@@ -1,6 +1,6 @@
 import asyncio
 import json
-import aiohttp
+import requests
 from collections import defaultdict
 from pathlib import Path
 from datetime import datetime, timedelta
@@ -28,8 +28,13 @@ def load_watchlist():
 async def send_telegram_notification(message: str):
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     payload = {"chat_id": TELEGRAM_CHAT_ID, "text": message, "parse_mode": "Markdown"}
-    async with aiohttp.ClientSession() as s:
-        await s.post(url, data=payload)
+    try:
+        response = requests.post(url, json=payload, timeout=10, verify=False)
+        response.raise_for_status()
+        print("✅ Notification sent successfully.")
+    except requests.RequestException as e:
+        print(f"❌ Failed to send notification: {e}")
+        # Optionally, you can log this error to a file or database for further analysis
 
 def combine_items(items, key_qty="value"):
     d = defaultdict(int)
@@ -72,10 +77,9 @@ def seconds_until_next_5_min_offset_30():
 async def check_stock_once(check_at=None):
     url = "https://growagarden.gg/api/stock"
     try:
-        async with aiohttp.ClientSession() as session:
-            resp = await session.get(url)
-            resp.raise_for_status()
-            data = await resp.json()
+        response = requests.get(url, timeout=10, verify=False)
+        response.raise_for_status()
+        data = response.json()
 
         watchlist = load_watchlist()
         if not watchlist:
@@ -110,13 +114,16 @@ async def check_stock_once(check_at=None):
         await send_telegram_notification(f"Error fetching stock: {e}")
 
 async def main_loop():
-    while True:
-        now = datetime.now().strftime("%H:%M:%S")
-        print(f"⏰ Check at {now}")
-        await check_stock_once(check_at=now)
-        wait = seconds_until_next_5_min_offset_1()
-        print(f"🕒 Sleep for {int(wait)} s")
-        await asyncio.sleep(wait)
+    try:
+        while True:
+            now = datetime.now().strftime("%H:%M:%S")
+            print(f"⏰ Check at {now}")
+            await check_stock_once(check_at=now)
+            wait = seconds_until_next_5_min_offset_1()
+            print(f"🕒 Sleep for {int(wait)} s")
+            await asyncio.sleep(wait)
+    except KeyboardInterrupt:
+        print("🔴 Stopping the notifier.")
 
 if __name__ == "__main__":
     asyncio.run(main_loop())
