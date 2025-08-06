@@ -7,7 +7,6 @@ import os
 import sqlite3
 import requests
 import asyncio
-import telegram
 
 # Config
 load_dotenv()
@@ -451,7 +450,7 @@ async def check_current_stock(check_at=None, app=None):
     except Exception as e:
         print(f"❌ Fetch error: {e}")
         await app.bot.send_message(
-            chat_id=os.getenv("TELEGRAM_ERROR_CHAT_ID"),
+            chat_id=TELEGRAM_ERROR_CHAT_ID,
             text=f"❌ Error fetching stock data: {e}"
         )
 
@@ -466,18 +465,6 @@ async def periodic_stock_check(app):
             await asyncio.sleep(wait)
     except KeyboardInterrupt:
         print("🔴 Stopping the notifier.")
-    except Exception as e:
-        print(f"❌ Fetch error: {e}")
-        error_chat_id = os.getenv("TELEGRAM_ERROR_CHAT_ID")
-        # Only try to send error message if chat_id is set and error is not Forbidden
-        if error_chat_id and not isinstance(e, telegram.error.Forbidden):
-            try:
-                await app.bot.send_message(
-                    chat_id=error_chat_id,
-                    text=f"❌ Error fetching stock data: {e}"
-                )
-            except telegram.error.BadRequest as be:
-                print(f"❌ Failed to send error message: {be}")
 
 async def on_startup(app):
     app.create_task(periodic_stock_check(app))
