@@ -1,4 +1,4 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, error
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, CallbackQueryHandler, MessageHandler, filters
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
@@ -7,6 +7,7 @@ import os
 import sqlite3
 import requests
 import asyncio
+
 
 # Config
 load_dotenv()
@@ -448,11 +449,18 @@ async def check_current_stock(check_at=None, app=None):
         current_stock.update(current)
 
     except Exception as e:
-        print(f"❌ Fetch error: {e}")
-        await app.bot.send_message(
-            chat_id=TELEGRAM_ERROR_CHAT_ID,
-            text=f"❌ Error fetching stock data: {e}"
-        )
+        if isinstance(e, error.Forbidden):
+            pass  # Do nothing, just ignore
+        else:
+            error_chat_id = os.getenv("TELEGRAM_ERROR_CHAT_ID")
+            if error_chat_id:
+                try:
+                    await app.bot.send_message(
+                        chat_id=error_chat_id,
+                        text=f"❌ Error fetching stock data: {e}"
+                    )
+                except Exception as send_err:
+                    print(f"❌ Failed to send error message: {send_err}")
 
 async def periodic_stock_check(app):
     try:
