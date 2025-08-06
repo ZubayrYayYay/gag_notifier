@@ -11,6 +11,7 @@ import asyncio
 # Config
 load_dotenv()
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TELEGRAM_ERROR_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 ITEMS_PER_PAGE = 5
 conn = sqlite3.connect('gag_notifier.db')
 
