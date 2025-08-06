@@ -370,13 +370,22 @@ def seconds_until_next_5_min_offset_1():
     # Find the next minute that is a multiple of 5 plus 1
     minute = ((now.minute // 5) + 1) * 5 + 1
     hour = now.hour
+    day = now.day
+    month = now.month
+    year = now.year
+
     if minute >= 60:
         minute -= 60
         hour += 1
         if hour >= 24:
             hour = 0
-            now = now + timedelta(days=1)
-    next_t = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
+            # Move to next day
+            next_t = datetime(year, month, day, hour, minute, 0, 0) + timedelta(days=1)
+        else:
+            next_t = datetime(year, month, day, hour, minute, 0, 0)
+    else:
+        next_t = datetime(year, month, day, hour, minute, 0, 0)
+
     delta = (next_t - now).total_seconds()
     if delta <= 0:
         next_t += timedelta(minutes=5)
