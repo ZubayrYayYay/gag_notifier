@@ -1,0 +1,347 @@
+{
+    "type": "initial_data",
+    "data": {
+        "seeds": [
+            {
+                "name": "Carrot",
+                "quantity": 10,
+                "available": true,
+                "category": "SEEDS",
+                "type": "seed",
+                "roleId": "1376319170052100284",
+                "lastUpdated": "2025-08-15T12:20:09.503Z"
+            },
+            {
+                "name": "Strawberry",
+                "quantity": 6,
+                "available": true,
+                "category": "SEEDS",
+                "type": "seed",
+                "roleId": "1376319170052100283",
+                "lastUpdated": "2025-08-15T12:20:09.504Z"
+            },
+            {
+                "name": "Mushroom",
+                "quantity": 16,
+                "available": true,
+                "category": "SEEDS",
+                "type": "seed",
+                "roleId": "1391306446431457452",
+                "lastUpdated": "2025-08-15T12:20:09.505Z"
+            },
+            {
+                "name": "Tomato",
+                "quantity": 2,
+                "available": true,
+                "category": "SEEDS",
+                "type": "seed",
+                "roleId": "1376319170052100280",
+                "lastUpdated": "2025-08-15T12:20:09.506Z"
+            },
+            {
+                "name": "Blueberry",
+                "quantity": 5,
+                "available": true,
+                "category": "SEEDS",
+                "type": "seed",
+                "roleId": "1376319170052100282",
+                "lastUpdated": "2025-08-15T12:20:09.506Z"
+            }
+        ],
+        "gear": [
+            {
+                "name": "Trading Ticket",
+                "quantity": 2,
+                "available": true,
+                "category": "GEAR",
+                "type": "gear",
+                "roleId": "1401440667472756776",
+                "lastUpdated": "2025-08-15T12:20:08.526Z"
+            },
+            {
+                "name": "Cleaning Spray",
+                "quantity": 3,
+                "available": true,
+                "category": "GEAR",
+                "type": "gear",
+                "roleId": "1383919889819107478",
+                "lastUpdated": "2025-08-15T12:20:08.528Z"
+            },
+            {
+                "name": "Trowel",
+                "quantity": 3,
+                "available": true,
+                "category": "GEAR",
+                "type": "gear",
+                "roleId": "1376319169984991320",
+                "lastUpdated": "2025-08-15T12:20:08.529Z"
+            },
+            {
+                "name": "Watering Can",
+                "quantity": 2,
+                "available": true,
+                "category": "GEAR",
+                "type": "gear",
+                "roleId": "1376319169984991321",
+                "lastUpdated": "2025-08-15T12:20:08.529Z"
+            },
+            {
+                "name": "Recall Wrench",
+                "quantity": 1,
+                "available": true,
+                "category": "GEAR",
+                "type": "gear",
+                "roleId": "1376319169984991319",
+                "lastUpdated": "2025-08-15T12:20:08.529Z"
+            },
+            {
+                "name": "Favorite Tool",
+                "quantity": 1,
+                "available": true,
+                "category": "GEAR",
+                "type": "gear",
+                "roleId": "1376319169984991313",
+                "lastUpdated": "2025-08-15T12:20:08.529Z"
+            },
+            {
+                "name": "Harvest Tool",
+                "quantity": 1,
+                "available": true,
+                "category": "GEAR",
+                "type": "gear",
+                "roleId": "1379610228643070003",
+                "lastUpdated": "2025-08-15T12:20:08.529Z"
+            }
+        ],
+        "eggs": [
+            {
+                "name": "Common Summer Egg",
+                "quantity": 1,
+                "available": true,
+                "category": "EGGS",
+                "type": "egg",
+                "roleId": "1385994564388782251",
+                "lastUpdated": "2025-08-15T12:00:07.873Z"
+            },
+            {
+                "name": "Common Egg",
+                "quantity": 1,
+                "available": true,
+                "category": "EGGS",
+                "type": "egg",
+                "roleId": "1376319170001633496",
+                "lastUpdated": "2025-08-15T12:00:07.874Z"
+            },
+            {
+                "name": "Common Egg",
+                "quantity": 1,
+                "available": true,
+                "category": "EGGS",
+                "type": "egg",
+                "roleId": "1376319170001633496",
+                "lastUpdated": "2025-08-15T12:00:07.874Z"
+            }
+        ],
+        "cosmetics": [
+            {
+                "name": "Beach Crate",
+                "quantity": 1,
+                "available": true,
+                "category": "COSMETICS",
+                "type": "cosmetics",
+                "lastUpdated": "2025-08-15T12:00:05.034Z"
+            },
+            {
+                "name": "Sign Crate",
+                "quantity": 1,
+                "available": true,
+                "category": "COSMETICS",
+                "type": "cosmetics",
+                "lastUpdated": "2025-08-15T12:00:05.035Z"
+            },
+            {
+                "name": "Log Bench",
+                "quantity": 1,
+                "available": true,
+                "category": "COSMETICS",
+                "type": "cosmetics",
+                "lastUpdated": "2025-08-15T12:00:05.036Z"
+            },
+            {
+                "name": "Rake",
+                "quantity": 1,
+                "available": true,
+                "category": "COSMETICS",
+                "type": "cosmetics",
+                "lastUpdated": "2025-08-15T12:00:05.036Z"
+            },
+            {
+                "name": "Lamp Post",
+                "quantity": 1,
+                "available": true,
+                "category": "COSMETICS",
+                "type": "cosmetics",
+                "lastUpdated": "2025-08-15T12:00:05.036Z"
+            },
+            {
+                "name": "Shovel",
+                "quantity": 1,
+                "available": true,
+                "category": "COSMETICS",
+                "type": "cosmetics",
+                "lastUpdated": "2025-08-15T12:00:05.036Z"
+            },
+            {
+                "name": "Small Wood Flooring",
+                "quantity": 4,
+                "available": true,
+                "category": "COSMETICS",
+                "type": "cosmetics",
+                "lastUpdated": "2025-08-15T12:00:05.036Z"
+            },
+            {
+                "name": "Water Trough",
+                "quantity": 1,
+                "available": true,
+                "category": "COSMETICS",
+                "type": "cosmetics",
+                "lastUpdated": "2025-08-15T12:00:05.036Z"
+            },
+            {
+                "name": "Medium Path Tile",
+                "quantity": 4,
+                "available": true,
+                "category": "COSMETICS",
+                "type": "cosmetics",
+                "lastUpdated": "2025-08-15T12:00:05.036Z"
+            }
+        ],
+        "honey": [
+            {
+                "name": "Common Gnome Crate",
+                "quantity": 1,
+                "available": true,
+                "category": "TRAVELING MERCHANT",
+                "type": "honey",
+                "lastUpdated": "2025-08-15T12:00:08.652Z"
+            },
+            {
+                "name": "Classic Gnome Crate",
+                "quantity": 1,
+                "available": true,
+                "category": "TRAVELING MERCHANT",
+                "type": "honey",
+                "lastUpdated": "2025-08-15T12:00:08.652Z"
+            },
+            {
+                "name": "Farmers Gnome Crate",
+                "quantity": 1,
+                "available": true,
+                "category": "TRAVELING MERCHANT",
+                "type": "honey",
+                "lastUpdated": "2025-08-15T12:00:08.652Z"
+            }
+        ],
+        "events": [
+            {
+                "name": "Corrupt Radar",
+                "quantity": 2,
+                "available": true,
+                "category": "EVENTS",
+                "type": "event",
+                "lastUpdated": "2025-08-04T15:20:54.739Z"
+            },
+            {
+                "name": "Zen Sand",
+                "quantity": 2,
+                "available": true,
+                "category": "EVENTS",
+                "type": "event",
+                "lastUpdated": "2025-08-04T15:20:54.742Z"
+            },
+            {
+                "name": "Zenflare",
+                "quantity": 3,
+                "available": true,
+                "category": "EVENTS",
+                "type": "event",
+                "lastUpdated": "2025-08-04T15:20:54.743Z"
+            },
+            {
+                "name": "Zen Egg",
+                "quantity": 1,
+                "available": true,
+                "category": "EVENTS",
+                "type": "event",
+                "lastUpdated": "2025-08-04T15:20:54.743Z"
+            },
+            {
+                "name": "Zen Seed Pack",
+                "quantity": 2,
+                "available": true,
+                "category": "EVENTS",
+                "type": "event",
+                "lastUpdated": "2025-08-04T15:20:54.745Z"
+            },
+            {
+                "name": "Sakura Bush",
+                "quantity": 1,
+                "available": true,
+                "category": "EVENTS",
+                "type": "event",
+                "lastUpdated": "2025-08-04T15:20:54.745Z"
+            },
+            {
+                "name": "Hot Spring",
+                "quantity": 1,
+                "available": true,
+                "category": "EVENTS",
+                "type": "event",
+                "lastUpdated": "2025-08-04T15:20:54.746Z"
+            },
+            {
+                "name": "Tranquil Radar",
+                "quantity": 3,
+                "available": true,
+                "category": "EVENTS",
+                "type": "event",
+                "lastUpdated": "2025-08-04T15:20:54.746Z"
+            }
+        ],
+        "weather": {
+            "type": "normal",
+            "active": false,
+            "effects": [],
+            "lastUpdated": "2025-08-15T12:20:02.295Z"
+        },
+        "weatherHistory": [
+            {
+                "type": "rain",
+                "active": true,
+                "startTime": "2025-08-15T11:54:02.685Z",
+                "endTime": "2025-08-15T12:02:01.544Z"
+            },
+            {
+                "type": "tornado",
+                "active": true,
+                "startTime": "2025-08-15T12:02:01.544Z",
+                "endTime": "2025-08-15T12:10:02.306Z"
+            },
+            {
+                "type": "rain",
+                "active": true,
+                "startTime": "2025-08-15T12:10:02.306Z",
+                "endTime": "2025-08-15T12:20:02.295Z"
+            }
+        ],
+        "chrisPCraving": {
+            "food": "Pizza",
+            "message": "Chris P. wants Pizza! - Check Pizza recipes!",
+            "lastUpdated": "2025-08-15T11:00:02.811Z",
+            "embedTitle": "Chris P. is craving something new!",
+            "embedDescription": "Chris P. thinks **Pizza** would be nice...\n\nCheck <#1401307245098307634> for recipes!",
+            "source": "chris_p_tracker"
+        },
+        "lastGlobalUpdate": "2025-08-15T12:20:09.507Z"
+    }
+}
